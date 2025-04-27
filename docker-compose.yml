@@ -1,28 +1,23 @@
 services:
   api-favoritos:
-    build: ./api-favoritos
+    build: .
     ports:
       - "5002:5002"
-    environment:
-      - POSTGRES_URL=postgres://user:password@postgres:5432/favoritos_db
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      - postgres
-      - redis
-
-  postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: favoritos_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./database.sqlite:/app/database.sqlite
+    environment:
+      - DB_PATH=/app/database.sqlite
+      - REDIS_URL=redis://redis
+    depends_on:
+      redis:
+        condition: service_healthy
 
   redis:
-    image: redis:6-alpine
+    image: redis:alpine
     ports:
       - "6379:6379"
-
-volumes:
-  postgres_data:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
