@@ -1,8 +1,2 @@
-# Ignora o arquivo .env (contém senhas/variáveis sensíveis)
-.env
-
-# Ignora o banco SQLite local (se quiser)
-database.sqlite
-
 # Node.js
 node_modules/
